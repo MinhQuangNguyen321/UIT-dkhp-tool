@@ -1,12 +1,25 @@
 import { ClassModelOriginal } from 'types';
 
 export function arrayToTkbObject(array: any[]): ClassModelOriginal {
-  // convert excel based date (1989-Dec-30) to Js based date (1970-Jan-01)
-  function convertExcelDateToStringDate(excelDate) {
-    // in Excel, based date is 1989-Dec-30: https://stackoverflow.com/questions/36378476/why-does-the-date-returns-31-12-1899-when-1-is-passed-to-it
-    // @ts-ignore
-    const offsetOfBases = new Date(0) - new Date(1899, 11, 31);
-    const jsDate = new Date(excelDate * 24 * 60 * 60 * 1000 - offsetOfBases);
+  // convert excel based date (1899-Dec-30) to Js based date (1970-Jan-01)
+  function convertExcelDateToStringDate(excelDate: any): string {
+    if (!excelDate && excelDate !== 0) return '';
+    if (excelDate instanceof Date) {
+      if (isNaN(excelDate.getTime())) return '';
+      return (
+        excelDate.getFullYear() +
+        '-' +
+        (excelDate.getMonth() + 1).toString().padStart(2, '0') +
+        '-' +
+        excelDate.getDate().toString().padStart(2, '0')
+      );
+    }
+    const num = typeof excelDate === 'number' ? excelDate : parseFloat(excelDate);
+    if (isNaN(num) || num <= 0) return typeof excelDate === 'string' ? excelDate : '';
+    // in Excel, base date is 1899-Dec-31: https://stackoverflow.com/questions/36378476/why-does-the-date-returns-31-12-1899-when-1-is-passed-to-it
+    const offsetOfBases = new Date(0).getTime() - new Date(1899, 11, 31).getTime();
+    const jsDate = new Date(num * 24 * 60 * 60 * 1000 - offsetOfBases);
+    if (isNaN(jsDate.getTime()) || isNaN(jsDate.getFullYear())) return '';
     return (
       jsDate.getFullYear() +
       '-' +
@@ -16,6 +29,15 @@ export function arrayToTkbObject(array: any[]): ClassModelOriginal {
     );
   }
 
+  const parseDateField = (val: any): string => {
+    if (!val && val !== 0) return '';
+    if (typeof val === 'string') {
+      const trimmed = val.trim();
+      return trimmed === 'NaN-NaN-NaN' ? '' : trimmed;
+    }
+    return convertExcelDateToStringDate(val);
+  };
+
   return {
     STT: array[0],
     MaMH: array[1],
@@ -24,7 +46,7 @@ export function arrayToTkbObject(array: any[]): ClassModelOriginal {
     MaGV: array[4],
     TenGV: array[5],
     SiSo: array[6],
-    SoTc: parseInt(array[7]),
+    SoTc: parseInt(array[7]) || 0,
     ThucHanh: array[8],
     HTGD: array[9],
     Thu: String(array[10]),
@@ -36,8 +58,8 @@ export function arrayToTkbObject(array: any[]): ClassModelOriginal {
     NamHoc: String(array[16]),
     HeDT: array[17],
     KhoaQL: array[18],
-    NBD: typeof array[19] === 'string' ? array[19] : convertExcelDateToStringDate(array[19]),
-    NKT: typeof array[20] === 'string' ? array[20] : convertExcelDateToStringDate(array[20]),
+    NBD: parseDateField(array[19]),
+    NKT: parseDateField(array[20]),
     GhiChu: array[21],
     NgonNgu: array[22],
   };

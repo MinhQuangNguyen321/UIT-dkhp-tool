@@ -65,7 +65,11 @@ export const buildTracker = () => {
     doWhenIdle(cacheToLocalStorage);
 
     // firebase analytics
-    logEvent(analytics, eventName, properties);
+    if (analytics) {
+      try {
+        logEvent(analytics, eventName, properties);
+      } catch {}
+    }
     // GA4
     ReactGA.event(eventName, properties);
   };

@@ -8,7 +8,7 @@ import reverse from 'lodash/reverse';
 import { useMemo, useState } from 'react';
 import { tracker } from '../../..';
 import { ClassModel } from '../../../types';
-import { isSameAgGridRowId, uniqMaLop } from '../../../utils';
+import { getMaMHFromClass, isSameAgGridRowId, isThucHanhClass, uniqMaLop } from '../../../utils';
 import { selectIsChiVeTkb, selectSelectedClasses, selectSelectedClassesBuoc3, useTkbStore } from '../../../zus';
 import { usePhanLoaiHocTrenTruongContext } from './hooks';
 import './styles.css';
@@ -66,20 +66,59 @@ type Props = {
   isOutsideTable?: boolean;
 } & React.TdHTMLAttributes<HTMLTableCellElement>;
 
-const getMonChonRoiKey = (data: ClassModel) => `${data.MaMH}-${data.ThucHanh}`;
+// Two classes are a valid LT+TH pair when one MaLop is a prefix of the other
+// e.g. IT004.R110 (LT) and IT004.R110.1 (TH) — the TH's MaLop starts with LT's MaLop + "."
+const isRelatedClasses = (a: ClassModel, b: ClassModel): boolean => {
+  const aLop = (a.MaLop || '').trim();
+  const bLop = (b.MaLop || '').trim();
+  return aLop.startsWith(bLop + '.') || bLop.startsWith(aLop + '.');
+};
+
 const useMonChonRoi = () => {
   const newRandomColors = useMemo(() => reverse([...randomColors]), []);
   const selectedClasses = useTkbStore(selectSelectedClassesBuoc3);
-  const map = groupBy(selectedClasses, getMonChonRoiKey);
-  const mapColor: Record<keyof typeof map, (typeof newRandomColors)[number]> = {};
-  let index = 0;
-  Object.entries(map).forEach(([key, value]) => {
-    const hasDuplication = uniqMaLop(value).length > 1;
-    if (hasDuplication) mapColor[key] = newRandomColors[index++];
-  });
 
-  const getWarningColor = (data: ClassModel) => mapColor[getMonChonRoiKey(data)];
-  const isWarning = (data: ClassModel) => !!getWarningColor(data);
+  // For each selected class, find if there's any OTHER selected class with same MaMH
+  // that is NOT a related LT/TH pair → that's a true duplicate worth warning
+  const warningClassSet = useMemo(() => {
+    const uniq = uniqMaLop(selectedClasses);
+    const warningMaLops = new Set<string>();
+    for (let i = 0; i < uniq.length; i++) {
+      for (let j = i + 1; j < uniq.length; j++) {
+        const a = uniq[i];
+        const b = uniq[j];
+        if (getMaMHFromClass(a) !== getMaMHFromClass(b)) continue; // different subject
+        if (isRelatedClasses(a, b)) continue; // valid LT+TH pair, skip
+        // Same subject, not a LT/TH pair → both are duplicates
+        warningMaLops.add(a.MaLop);
+        warningMaLops.add(b.MaLop);
+      }
+    }
+    return warningMaLops;
+  }, [selectedClasses]);
+
+  // Assign a color per "duplicate group" (same MaMH, unrelated classes)
+  const colorMap = useMemo(() => {
+    const result: Record<string, string> = {};
+    let colorIdx = 0;
+    const uniq = uniqMaLop(selectedClasses);
+    // Group classes that are duplicates together by MaMH
+    const groups = new Map<string, ClassModel[]>();
+    for (const cls of uniq) {
+      if (!warningClassSet.has(cls.MaLop)) continue;
+      const key = getMaMHFromClass(cls);
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(cls);
+    }
+    groups.forEach((classes) => {
+      const color = newRandomColors[colorIdx++ % newRandomColors.length];
+      for (const cls of classes) result[cls.MaLop] = color;
+    });
+    return result;
+  }, [selectedClasses, warningClassSet, newRandomColors]);
+
+  const getWarningColor = (data: ClassModel) => colorMap[data.MaLop];
+  const isWarning = (data: ClassModel) => warningClassSet.has(data.MaLop);
   return { isWarning, getWarningColor };
 };
 export const [ClassCellContext, useClassCellContext] = constate(() => {
@@ -93,7 +132,14 @@ export const [ClassCellContext, useClassCellContext] = constate(() => {
   const isHoveringOnThisCellRemoveIcon = (data: ClassModel) =>
     isHoveringOnThisCell(data, 'MaMH') && isHoveringOnRemoveIcon;
   const isHoveringOnThisCellWarningIcon = (data: ClassModel) => {
-    return !!cellHovering && getMonChonRoiKey(data) === getMonChonRoiKey(cellHovering) && isHoveringOnWarningIcon;
+    // Show tooltip on all classes in the same warning group (same subject, duplicate)
+    return (
+      !!cellHovering &&
+      isWarning(data) &&
+      isWarning(cellHovering) &&
+      getMaMHFromClass(data) === getMaMHFromClass(cellHovering) &&
+      isHoveringOnWarningIcon
+    );
   };
   const onRemoveClass = () => {
     setCellHovering(null);
@@ -115,6 +161,16 @@ export const [ClassCellContext, useClassCellContext] = constate(() => {
 
 function ClassCell({ data, isOutsideTable = false, ...restProps }: Props) {
   const { MaLop, NgonNgu, TenMH, TenGV, PhongHoc, NBD, NKT, Thu, Tiet } = data;
+
+  // Format yyyy-MM-dd → dd/MM/yyyy for display
+  const formatDate = (d: string | undefined) => {
+    if (!d || d === 'NaN-NaN-NaN') return '';
+    const parts = d.split('-');
+    if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    return d;
+  };
+  const nbdDisplay = formatDate(NBD);
+  const nktDisplay = formatDate(NKT);
   const removeClasses = useTkbStore((s) => s.removeClasses);
   const selectedClasses = useTkbStore(selectSelectedClasses);
   const isChiVeTkb = useTkbStore(selectIsChiVeTkb);
@@ -132,11 +188,11 @@ function ClassCell({ data, isOutsideTable = false, ...restProps }: Props) {
 
   const { redundant } = usePhanLoaiHocTrenTruongContext();
 
-  // TODO: display warning cho cac truong hop:
-  // - chon 2 slot chung mon khac lop, i.e: Nhap Mon Lap Trinh LT cua 1 nguoi, TH cua 1 nguoi khac
+  // display warning for classes of same subject
   const cacLopChungMonDangChon = useMemo(() => {
-    return selectedClasses.filter((selectedClass) => selectedClass.MaMH === data.MaMH);
-  }, [data.MaMH, selectedClasses]);
+    const maMH = getMaMHFromClass(data);
+    return selectedClasses.filter((selectedClass) => getMaMHFromClass(selectedClass) === maMH);
+  }, [data, selectedClasses]);
 
   const redundantIndex = redundant.findIndex((info) => {
     return (
@@ -227,10 +283,18 @@ function ClassCell({ data, isOutsideTable = false, ...restProps }: Props) {
         <br />
         {PhongHoc}
         <br />
-        BĐ: {NBD}
-        <br />
-        KT: {NKT}
-        <br />
+        {nbdDisplay && (
+          <>
+            BĐ: {nbdDisplay}
+            <br />
+          </>
+        )}
+        {nktDisplay && (
+          <>
+            KT: {nktDisplay}
+            <br />
+          </>
+        )}
         {isOutsideTable && (
           <>
             <br />

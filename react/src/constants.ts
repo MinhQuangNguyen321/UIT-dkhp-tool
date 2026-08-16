@@ -1,3 +1,5 @@
+export const isProd = process.env.NODE_ENV === 'production';
+
 export const COLORS = {
   SUCCESS: 'green',
   ERROR: 'red',

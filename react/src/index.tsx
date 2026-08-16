@@ -24,7 +24,10 @@ declare module '@mui/styles/defaultTheme' {
   interface DefaultTheme extends Theme {}
 }
 
-export const isProd = process.env.NODE_ENV === 'production';
+export { isProd } from './constants';
+
+const hasFirebaseApiKey =
+  Boolean(process.env.REACT_APP_FIREBASE_API_KEY) && process.env.REACT_APP_FIREBASE_API_KEY !== 'unspecified';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY || 'unspecified',
@@ -34,10 +37,14 @@ const firebaseConfig = {
   messagingSenderId: '473962295838',
   appId: '1:473962295838:web:24fcf634d9eee42d2db40f',
 };
-const app = initializeApp(firebaseConfig, { automaticDataCollectionEnabled: true });
-export const analytics = getAnalytics(app);
+const app = initializeApp(firebaseConfig, { automaticDataCollectionEnabled: hasFirebaseApiKey });
+export const analytics = hasFirebaseApiKey ? getAnalytics(app) : null;
 export const db = getFirestore(app);
-getPerformance(app);
+if (hasFirebaseApiKey) {
+  try {
+    getPerformance(app);
+  } catch {}
+}
 
 export const tracker = buildTracker();
 checkAdBlocker().then((hasAdBlocker) => {

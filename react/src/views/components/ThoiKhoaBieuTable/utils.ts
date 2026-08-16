@@ -21,10 +21,10 @@ export const timeLookup = [
   /* tiet 14 */ tietOnline.label,
 ];
 
-export const getTietIndex = (tietString) => {
+export const getTietIndex = (tietString: string | number) => {
   if (tietString === tietOnline.stringValue) return tietOnline.index; // Thứ 3 Tiết * -> Thứ 3 Học Online
-  if (tietString === '0') return 9;
-  return tietString - 1;
+  if (tietString === '0' || tietString === '10' || tietString === 10) return 9;
+  return Number(tietString) - 1;
 };
 
 // Plagiarize from: https://github.com/gillyb/reimg/blob/master/reimg.js
