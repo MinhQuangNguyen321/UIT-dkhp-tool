@@ -9,6 +9,14 @@ Tool Đăng Ký Học Phần UIT là một ứng dụng web hỗ trợ các bạ
 
 > Trước kia, để **1. Soạn Thời Khoá Biểu** mất vài ngày, bây giờ chỉ mất vài phút, để **2. ĐKHP** mất vài phút, bây giờ chỉ mất vài giây.
 
+## Bản quyền
+
+Dự án này hiện đang được cập nhật và quản lý bởi tôi. Tất cả nội dung trong repository này, bao gồm mã nguồn, tài liệu, hình ảnh, cấu trúc giao diện và các phiên bản phân phối liên quan, thuộc quyền sở hữu của tôi, trừ những phần được ghi rõ là có nguồn gốc từ repo gốc.
+
+Repository gốc tham khảo: https://github.com/loia5tqd001/Dang-Ky-Hoc-Phan-UIT
+
+Mọi việc sao chép, chỉnh sửa, phát hành lại, hoặc sử dụng phần mềm này cần được sự đồng ý bằng văn bản từ chủ sở hữu. Nếu dự án được fork hoặc tái sử dụng cho mục đích học tập, nghiên cứu hoặc phát triển riêng, vui lòng giữ lại thông tin bản quyền và ghi rõ nguồn gốc ban đầu.
+
 ## Các update ở phiên bản 2024
 
 ### Preview
