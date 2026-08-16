@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/UIT-dkhp-tool/static/css/main.d8063b85.css",
+    "main.js": "/UIT-dkhp-tool/static/js/main.15485d6e.js",
+    "static/js/517.fbcf9bf0.chunk.js": "/UIT-dkhp-tool/static/js/517.fbcf9bf0.chunk.js",
+    "static/css/739.f7a46430.chunk.css": "/UIT-dkhp-tool/static/css/739.f7a46430.chunk.css",
+    "static/js/739.aefd6d03.chunk.js": "/UIT-dkhp-tool/static/js/739.aefd6d03.chunk.js",
+    "static/css/23.9cd1e298.chunk.css": "/UIT-dkhp-tool/static/css/23.9cd1e298.chunk.css",
+    "static/js/23.4df36839.chunk.js": "/UIT-dkhp-tool/static/js/23.4df36839.chunk.js",
+    "static/js/24.78250835.chunk.js": "/UIT-dkhp-tool/static/js/24.78250835.chunk.js",
+    "static/js/741.1697710d.chunk.js": "/UIT-dkhp-tool/static/js/741.1697710d.chunk.js",
+    "static/js/306.7a6b17d2.chunk.js": "/UIT-dkhp-tool/static/js/306.7a6b17d2.chunk.js",
+    "static/js/382.c4e53879.chunk.js": "/UIT-dkhp-tool/static/js/382.c4e53879.chunk.js",
+    "static/media/logo-uit.png": "/UIT-dkhp-tool/static/media/logo-uit.24978aaec8e704d6bcf1.png",
+    "index.html": "/UIT-dkhp-tool/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.d8063b85.css",
+    "static/js/main.15485d6e.js"
+  ]
+}
