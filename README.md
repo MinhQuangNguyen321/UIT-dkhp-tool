@@ -9,13 +9,20 @@ Tool Đăng Ký Học Phần UIT là một ứng dụng web hỗ trợ các bạ
 
 > Trước kia, để **1. Soạn Thời Khoá Biểu** mất vài ngày, bây giờ chỉ mất vài phút, để **2. ĐKHP** mất vài phút, bây giờ chỉ mất vài giây.
 
-## Bản quyền
+## Bản quyền & Sở hữu trí tuệ
 
-Dự án này hiện đang được cập nhật và quản lý bởi tôi. Tất cả nội dung trong repository này, bao gồm mã nguồn, tài liệu, hình ảnh, cấu trúc giao diện và các phiên bản phân phối liên quan, thuộc quyền sở hữu của tôi, trừ những phần được ghi rõ là có nguồn gốc từ repo gốc.
+> Copyright © 2026. Bản quyền thuộc về chủ sở hữu của repository này. All rights reserved.
+
+Tất cả nội dung trong repository này, bao gồm nhưng không giới hạn ở mã nguồn, tài liệu, giao diện, hình ảnh, cấu trúc dữ liệu, quy trình xử lý, và các phiên bản phân phối liên quan, đều thuộc quyền sở hữu của chủ sở hữu repo này, trừ các phần được ghi rõ là có nguồn gốc từ dự án gốc hoặc bên thứ ba.
 
 Repository gốc tham khảo: https://github.com/loia5tqd001/Dang-Ky-Hoc-Phan-UIT
 
-Mọi việc sao chép, chỉnh sửa, phát hành lại, hoặc sử dụng phần mềm này cần được sự đồng ý bằng văn bản từ chủ sở hữu. Nếu dự án được fork hoặc tái sử dụng cho mục đích học tập, nghiên cứu hoặc phát triển riêng, vui lòng giữ lại thông tin bản quyền và ghi rõ nguồn gốc ban đầu.
+### Điều khoản sử dụng
+
+- Mọi việc sao chép, chỉnh sửa, phân phối, tái sử dụng hoặc phát hành lại mã nguồn và tài liệu trong repo này đều cần có sự đồng ý bằng văn bản từ chủ sở hữu.
+- Việc fork hoặc sử dụng cho mục đích học tập, nghiên cứu hoặc phát triển cá nhân chỉ được phép khi vẫn giữ nguyên thông tin bản quyền và ghi rõ nguồn gốc ban đầu.
+- Bất kỳ hoạt động nào vi phạm quyền sở hữu trí tuệ hoặc sử dụng tài liệu không có sự cho phép sẽ bị xem là vi phạm pháp luật liên quan.
+- Nếu bạn muốn sử dụng dự án cho mục đích thương mại hoặc cộng tác dài hạn, vui lòng liên hệ trực tiếp với chủ sở hữu repo để được cấp phép rõ ràng.
 
 ## Các update ở phiên bản 2024
 
